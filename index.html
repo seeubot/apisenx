@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieStream</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(147, 51, 234, 0.3);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #a78bfa;
+        }
+
+        .movie-count {
+            color: #c4b5fd;
+            font-size: 14px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 40px;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .movies-list {
+            list-style: none;
+        }
+
+        .movie-item {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .movie-item:hover {
+            background: rgba(147, 51, 234, 0.2);
+            border-color: rgba(147, 51, 234, 0.5);
+            transform: translateX(5px);
+        }
+
+        .movie-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .play-icon {
+            color: #a78bfa;
+            font-size: 20px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            color: #9ca3af;
+        }
+
+        .no-results-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(147, 51, 234, 0.3);
+            padding: 20px;
+            text-align: center;
+            color: #9ca3af;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="logo">
+                    🎬 MovieStream
+                </div>
+                <div class="movie-count" id="movieCount">0 Movies</div>
+            </div>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="Search movies..."
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <ul class="movies-list" id="moviesList"></ul>
+        <div class="no-results hidden" id="noResults">
+            <div class="no-results-icon">🎬</div>
+            <p style="font-size: 18px;">No movies found</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 MovieStream. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Movies Data
+        const moviesData = [
+            {
+                id: 1,
+                title: "Mahavatar Narsimha",
+                url: "https://mbmove.mbtempt.site/Mahavatar%20Narsimha%20%282025%29-Tel-1080P-HEVC.mkv"
+            },
+            {
+                id: 2,
+                title: "Bimbisara",
+                url: "https://mblinkmove.mbtempt.site/fp4fdw000x0n"
+            },
+            {
+                id: 3,
+                title: "Pushpa 2",
+                url: "https://mbmove.mbtempt.site/Pushpa%202%20%282024%29-Tel-4K-HDR.mkv"
+            },
+            {
+                id: 4,
+                title: "Salaar",
+                url: "https://mbmove.mbtempt.site/Salaar%20%282024%29-Tel-1080P.mkv"
+            },
+            {
+                id: 5,
+                title: "RRR",
+                url: "https://mbmove.mbtempt.site/RRR%20%282022%29-Tel-4K.mkv"
+            },
+            {
+                id: 6,
+                title: "KGF Chapter 2",
+                url: "https://mbmove.mbtempt.site/KGF%20Chapter%202%20%282022%29-Kan-1080P.mkv"
+            }
+        ];
+
+        let allMovies = [];
+        const moviesList = document.getElementById('moviesList');
+        const searchInput = document.getElementById('searchInput');
+        const movieCount = document.getElementById('movieCount');
+        const noResults = document.getElementById('noResults');
+
+        // Create movie list item HTML
+        function createMovieItem(movie) {
+            return `
+                <li class="movie-item" onclick="playMovie(${movie.id})">
+                    <span class="movie-name">${movie.title}</span>
+                    <span class="play-icon">▶</span>
+                </li>
+            `;
+        }
+
+        // Render movies
+        function renderMovies(movies) {
+            if (movies.length === 0) {
+                moviesList.innerHTML = '';
+                moviesList.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            } else {
+                moviesList.classList.remove('hidden');
+                noResults.classList.add('hidden');
+                moviesList.innerHTML = movies.map(movie => createMovieItem(movie)).join('');
+            }
+            updateMovieCount(movies.length);
+        }
+
+        // Update movie count
+        function updateMovieCount(count) {
+            movieCount.textContent = `${count} Movie${count !== 1 ? 's' : ''}`;
+        }
+
+        // Filter movies - only search when 3 or more characters
+        function filterMovies(query) {
+            // If query is less than 3 characters, show all movies
+            if (query.length < 3) {
+                renderMovies(allMovies);
+                return;
+            }
+
+            const searchTerm = query.toLowerCase();
+            const filtered = allMovies.filter(movie => {
+                return movie.title.toLowerCase().includes(searchTerm);
+            });
+            
+            renderMovies(filtered);
+        }
+
+        // Play movie function
+        function playMovie(movieId) {
+            const movie = allMovies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            // Check if Android interface is available
+            if (typeof Android !== 'undefined' && Android.playChannel) {
+                const channelData = JSON.stringify({
+                    title: movie.title,
+                    url: movie.url,
+                    key: "",
+                    cookie: ""
+                });
+                
+                try {
+                    Android.playChannel(channelData);
+                } catch (e) {
+                    console.error('Error calling Android interface:', e);
+                    alert('Failed to play video. Please try again.');
+                }
+            } else {
+                // Fallback for web preview
+                alert(`Playing: ${movie.title}\nURL: ${movie.url}\n\nNote: This would open in the Android player app.`);
+            }
+        }
+
+        // Search input event listener
+        searchInput.addEventListener('input', (e) => {
+            filterMovies(e.target.value);
+        });
+
+        // Initialize
+        function init() {
+            allMovies = moviesData;
+            renderMovies(allMovies);
+        }
+
+        // Load on page ready
+        init();
+    </script>
+</body>
+</html>
